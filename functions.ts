@@ -48,15 +48,14 @@ export const addFile = (
 };
 
 export const deleteItem = (
-  deleteElement: string,
-  res: express.Response,
-  pathEnd: string = ""
+    deleteElement: string,
+    res: express.Response,
+    pathEnd: string = ""
 ) => {
   fs.rm(path + pathEnd + deleteElement, { recursive: true })
     .then(() => {
       displayItems(res, 200, path + pathEnd);
     })
-    .catch((e) => console.log("erreur:", e));
 };
 
 export const displayAccordingToItemType = (
