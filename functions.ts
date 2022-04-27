@@ -40,11 +40,11 @@ export const addFile = (
   res: express.Response,
   pathEnd: string = ""
 ) => {
-  fs.writeFile(path + pathEnd + file["name"], file["data"])
-    .then(() => {
-      displayItems(res, 201, path);
-    })
-    .catch(() => res.status(400).send("Aucun fichier présent dans la requête"));
+  fs.rename(file.file, path + pathEnd + file.filename)
+  .then(() => {
+    displayItems(res, 201, path)
+  })
+  .catch(() => res.status(400).send("Aucun fichier présent dans la requête"));
 };
 
 export const deleteItem = (

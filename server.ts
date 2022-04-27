@@ -1,5 +1,5 @@
 import express from "express";
-import fileUpload from "express-fileupload";
+import bb from "express-busboy";
 import {
   displayItems,
   addNewFolder,
@@ -9,18 +9,26 @@ import {
   isFolder,
 } from "./functions";
 
+declare module 'express-serve-static-core' {
+  interface Request {
+    files?: object
+  }
+}
+
+
 export const start = () => {
   const app: express.Application = express();
   const port: number = 3000;
+  const options: bb.ExpressBusboyOptions = {
+    headers: {
+      "content-type": "multipart/form-data",
+    },
+    upload: true,
+    allowedPath: /./,
+  };
+  bb.extend(app, options);
 
   app.use(express.static("frontend"));
-  app.use(
-    fileUpload({
-      headers: {
-        "content-type": "multipart/form-data",
-      },
-    })
-  );
 
   app
     .route("/api/drive")
@@ -33,7 +41,11 @@ export const start = () => {
     })
     .put(function (req: express.Request, res: express.Response) {
       const files: any = req.files;
-      addFile(files.file, res);
+      if (!files) {
+        res.status(400).send("something went wrong");
+      } else {
+        addFile(files.file,res);
+      }
     });
 
   app.delete(
